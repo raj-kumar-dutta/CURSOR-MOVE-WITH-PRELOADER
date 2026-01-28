@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#121212">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-TileColor" content="#121212">
+    <meta name="msapplication-config" content="none">
+    <title>Among Us Mouse Follower</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        html, body {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            max-height: 100vh;
+            max-height: 100dvh;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            overflow: hidden;
+            cursor: crosshair;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            touch-action: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #crewmate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: clamp(50px, 15vw, 100px);
+            pointer-events: none;
+            z-index: 1000;
+            will-change: transform;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+
+        #crewmate img {
+            width: 100%;
+            height: auto;
+            display: block;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            max-height: 100dvh;
+            background-color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .preloader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .preloader-text {
+            font-size: clamp(24px, 12vw, 48px);
+            font-weight: 300;
+            color: #ffffff;
+            letter-spacing: 2px;
+            animation: fadeInOut 0.3s ease-in-out;
+            text-align: center;
+            padding: 20px;
+            line-height: 1.2;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .instructions {
+            color: white;
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            text-align: center;
+            opacity: 0.5;
+            font-size: clamp(12px, 3vw, 16px);
+            line-height: 1.4;
+            pointer-events: none;
+        }
+
+        /* Landscape mode adjustments */
+        @media (orientation: landscape) {
+            .instructions {
+                bottom: 10px;
+                font-size: clamp(10px, 2vw, 14px);
+            }
+        }
+
+        /* Tablet and larger screens */
+        @media (min-width: 768px) {
+            body {
+                cursor: crosshair;
+            }
+        }
+
+        /* Mobile and touch devices */
+        @media (max-width: 768px) {
+            body {
+                cursor: pointer;
+            }
+
+            #crewmate {
+                width: clamp(50px, 20vw, 80px);
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            #crewmate {
+                width: clamp(40px, 18vw, 60px);
+            }
+
+            .preloader-text {
+                font-size: clamp(20px, 10vw, 40px);
+            }
+        }
+
+        /* iPad and tablets */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            #crewmate {
+                width: clamp(60px, 12vw, 90px);
+            }
+        }
+
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            #crewmate {
+                image-rendering: -webkit-optimize-contrast;
+            }
+        }
+
+        /* Prevent zoom on input focus for iOS */
+        @supports (-webkit-touch-callout: none) {
+            input, textarea, select {
+                font-size: 16px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="preloader" id="preloader">
+        <div class="preloader-text" id="preloaderText">Hello</div>
+    </div>
+
+    <div class="instructions">Move your mouse to make the crewmate follow you</div>
+
+    <div id="crewmate">
+        <img src="an871k4o1sn51.webp" alt="Yellow Crewmate">
+    </div>
+
+    <script>
+        // Preloader with hello in multiple languages
+        const preloader = document.getElementById('preloader');
+        const preloaderText = document.getElementById('preloaderText');
+        
+        const hellos = [
+            '👋 Hello',      // English
+            '👋 Hola',       // Spanish
+            '👋 Bonjour',    // French
+            '👋 Ciao',       // Italian
+            '👋 Hallo',      // German
+            '👋 Olá',        // Portuguese
+            '👋 Привет',     // Russian
+            '👋 你好',       // Chinese
+            '👋 こんにちは',  // Japanese
+            '👋 안녕하세요',  // Korean
+            
+            '👋 สวัสดี',     // Thai
+            '👋 नमस्ते',     // Hindi
+            '👋 שלום',       // Hebrew
+            '👋 مرحبا',      // Arabic
+            '👋 নমস্কার',     // Bengali
+            
+        ];
+        
+        let languageIndex = 0;
+        const preloaderDuration = 3000; // Total duration: 3 seconds
+        const languageInterval = preloaderDuration / hellos.length;
+        
+        function updateLanguage() {
+            preloaderText.textContent = hellos[languageIndex];
+            languageIndex++;
+            
+            if (languageIndex < hellos.length) {
+                setTimeout(updateLanguage, languageInterval);
+            } else {
+                // Hide preloader after all languages
+                setTimeout(() => {
+                    preloader.classList.add('hidden');
+                }, 300);
+            }
+        }
+        
+        // Start preloader
+        updateLanguage();
+
+        // Main crewmate follower script
+        const crewmate = document.getElementById('crewmate');
+        const isTouchDevice = () => {
+            return (('ontouchstart' in window) ||
+                    (navigator.maxTouchPoints > 0) ||
+                    (navigator.msMaxTouchPoints > 0));
+        };
+
+        // Handle device orientation changes
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                mouseX = window.innerWidth / 2;
+                mouseY = window.innerHeight / 2;
+                currentX = mouseX;
+                currentY = mouseY;
+            }, 100);
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (currentX > window.innerWidth) currentX = window.innerWidth / 2;
+            if (currentY > window.innerHeight) currentY = window.innerHeight / 2;
+        });
+        
+        // Target position (mouse/touch)
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        
+        // Current position (character)
+        let currentX = 0;
+        let currentY = 0;
+
+        // The "Lerp" speed: 0.05 is slow and smooth, 0.2 is fast
+        const speed = 0.07; 
+
+        // Update target coordinates on mouse/touch move
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Touch support for mobile devices
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                mouseX = e.touches[0].clientX;
+                mouseY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        // Fallback for touch start (when only touching)
+        window.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                mouseX = e.touches[0].clientX;
+                mouseY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        // Pointer events for better compatibility
+        window.addEventListener('pointermove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animate() {
+            // Calculate distance to move (Current + (Target - Current) * Speed)
+            currentX += (mouseX - currentX) * speed;
+            currentY += (mouseY - currentY) * speed;
+
+            // Get character size and offset it to center
+            const charSize = crewmate.offsetWidth;
+            const charOffset = charSize / 2;
+            const xPos = currentX - charOffset;
+            const yPos = currentY - charOffset;
+
+            // Calculate angle of movement
+            const deltaX = mouseX - currentX;
+            const deltaY = mouseY - currentY;
+            const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+
+            // Flip the character horizontally based on direction
+            const isMovingRight = deltaX > 0;
+            const scaleX = isMovingRight ? 1 : -1;
+
+            // Calculate rotation tilt based on vertical movement
+            const tilt = (deltaY / window.innerHeight) * 15; // Max 15 degree tilt
+
+            // Calculate movement speed for bounce effect
+            const movementSpeed = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            const bounce = Math.sin(Date.now() / 200) * (movementSpeed / 100);
+
+            // Apply the transformation with rotation and tilt
+            crewmate.style.transform = `translate(${xPos}px, ${yPos}px) scaleX(${scaleX}) rotateZ(${tilt}deg) translateY(${bounce}px)`;
+
+            requestAnimationFrame(animate);
+        }
+
+        // Run the animation loop
+        animate();
+    </script>
+</body>
+</html>
