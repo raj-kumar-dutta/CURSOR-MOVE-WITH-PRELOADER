@@ -82,7 +82,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: clamp(20px, 6vw, 32px);
+            width: clamp(26px, 8vw, 48px);
             pointer-events: none;
             z-index: 1000;
             will-change: transform;
@@ -184,14 +184,14 @@
             }
 
             #crewmate {
-                width: clamp(18px, 6vw, 28px);
+                width: clamp(22px, 7.5vw, 40px);
             }
         }
 
         /* Small phones */
         @media (max-width: 480px) {
             #crewmate {
-                width: clamp(16px, 5vw, 24px);
+                width: clamp(20px, 6.5vw, 36px);
             }
 
             .preloader-text {
@@ -202,7 +202,7 @@
         /* iPad and tablets */
         @media (min-width: 768px) and (max-width: 1024px) {
             #crewmate {
-                width: clamp(22px, 7vw, 30px);
+                width: clamp(26px, 8.5vw, 44px);
             }
         }
 
@@ -228,10 +228,10 @@
             right: 0;
             width: 100%;
             padding: 0.7rem clamp(1rem, 3vw, 2rem);
-            background: var(--navbar-bg);
+            background: transparent;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1.5px solid var(--navbar-border);
+            border-bottom: 1.5px solid transparent;
             z-index: 900;
             display: flex;
             justify-content: space-between;
@@ -318,7 +318,7 @@
             display: inline-block;
             font-weight: 500;
             letter-spacing: 0.5px;
-            text-transform: capitalize;
+            text-transform: uppercase;
         }
 
         .navbar-links a::before {
@@ -483,12 +483,12 @@
             <span>�</span> Data Science
         </a>
         <ul class="navbar-links">
-            <li><a href="#home" data-tooltip="Welcome">Home</a></li>
-            <li><a href="#about" data-tooltip="Know me better">About</a></li>
-            <li><a href="#projects" data-tooltip="My work">Projects</a></li>
-            <li><a href="#skills" data-tooltip="Technical skills">Skills</a></li>
-            <li><a href="#blog" data-tooltip="Read insights">Articles</a></li>
-            <li><a href="#contact" data-tooltip="Get in touch">Contact</a></li>
+            <li><a href="#home" data-tooltip="Welcome">HOME</a></li>
+            <li><a href="#about" data-tooltip="Know me better">ABOUT</a></li>
+            <li><a href="#projects" data-tooltip="My work">PROJECTS</a></li>
+            <li><a href="#skills" data-tooltip="Technical skills">SKILLS</a></li>
+            <li><a href="#vlog" data-tooltip="My videos">VLOG</a></li>
+            <li><a href="#contact" data-tooltip="Get in touch">CONTACT</a></li>
             <li><button id="themeToggle" title="Toggle theme">🌙</button></li>
         </ul>
     </nav>
